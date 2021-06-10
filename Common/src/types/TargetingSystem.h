@@ -3,7 +3,7 @@
 namespace sandbox {
     namespace types {
 
-        enum TargetingSystem {
+        enum class TargetingSystem {
             Visual = 1,
             IR = 2,
             Laser = 4,

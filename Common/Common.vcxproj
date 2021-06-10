@@ -195,8 +195,11 @@
     <ClInclude Include="src\Config.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\types\AmmoInfo.h" />
+    <ClInclude Include="src\types\AmmoUse.h" />
     <ClInclude Include="src\types\BackpackCargo.h" />
     <ClInclude Include="src\types\ConfigGroupCategory.h" />
+    <ClInclude Include="src\types\MagazineInfo.h" />
     <ClInclude Include="src\types\Side.h" />
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\System.h" />
