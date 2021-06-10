@@ -1,0 +1,6 @@
+[submodule "Dependencies/intercept"]
+	path = Dependencies/intercept
+	url = https://github.com/intercept/intercept.git
+[submodule "Dependencies/entt"]
+	path = Dependencies/entt
+	url = https://github.com/skypjack/entt.git
