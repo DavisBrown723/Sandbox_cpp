@@ -55,13 +55,6 @@ namespace sandbox {
 
         for (auto& system : m_systems)
             system.get().OnFrame(dt);
-
-        static bool spawned = false;
-        if (intercept::sqf::time() > 15 && !spawned) {
-            auto faction = Config::getFaction("BLU_F");
-            m_groupManager.createGroup(faction, faction->groupCategories["Infantry"].groups["BUS_InfAssault"], { 500, 500, 0 });
-            spawned = true;
-        }
     }
 
     void Core::OnMissionPaused() {

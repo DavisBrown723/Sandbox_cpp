@@ -43,6 +43,8 @@ namespace sandbox {
 
         inline static bool IsMissionRunning() { return Core::Get().m_missionRunning; }
         inline static bool IsGamePaused() { return Core::Get().m_gamePaused; };
+
+        inline static GroupManager GetGroupManager() { return Core::Get().m_groupManager; };
     };
 
 }

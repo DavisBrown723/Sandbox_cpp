@@ -2,6 +2,10 @@
 
 #include "Core/src/Core.h"
 
+#ifdef INCLUDE_DEMO
+    #pragma comment (lib, "Demo.lib")
+#endif
+
 using namespace sandbox;
 
 
