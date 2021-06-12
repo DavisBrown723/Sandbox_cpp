@@ -5,6 +5,8 @@
 #include "entt.hpp"
 #include "intercept.hpp"
 
+#include "SeatAssignment.h"
+
 namespace sandbox {
     namespace components {
 
@@ -12,6 +14,7 @@ namespace sandbox {
             std::string classname;
             entt::entity group;
             intercept::types::object unitObject;
+            int damage;
         };
 
     }

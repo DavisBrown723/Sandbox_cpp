@@ -274,11 +274,11 @@
     <ClInclude Include="src\Config.h" />
     <ClInclude Include="src\Common.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\types\AmmoInfo.h" />
+    <ClInclude Include="src\types\Ammo.h" />
     <ClInclude Include="src\types\AmmoUse.h" />
     <ClInclude Include="src\types\BackpackCargo.h" />
     <ClInclude Include="src\types\ConfigGroupCategory.h" />
-    <ClInclude Include="src\types\MagazineInfo.h" />
+    <ClInclude Include="src\types\Magazine.h" />
     <ClInclude Include="src\types\Side.h" />
     <ClInclude Include="src\Singleton.h" />
     <ClInclude Include="src\System.h" />
@@ -286,8 +286,9 @@
     <ClInclude Include="src\types\ConfigGroup.h" />
     <ClInclude Include="src\types\TargetingSystem.h" />
     <ClInclude Include="src\types\TurretPath.h" />
+    <ClInclude Include="src\types\UnitLoadout.h" />
     <ClInclude Include="src\types\VehicleSeats.h" />
-    <ClInclude Include="src\types\WeaponInfo.h" />
+    <ClInclude Include="src\types\Weapon.h" />
     <ClInclude Include="src\UnitInfo.h" />
     <ClInclude Include="src\Vector2.h" />
     <ClInclude Include="src\Vector3.h" />

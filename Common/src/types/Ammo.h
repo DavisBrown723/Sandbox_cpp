@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
-#include "types/AmmoUse.h"
+#include "AmmoUse.h"
 
 namespace sandbox {
     namespace types {
 
-        struct AmmoInfo {
+        struct AmmoDetails {
             std::string classname;
             std::vector<types::AmmoUse> uses;
         };

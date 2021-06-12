@@ -4,9 +4,10 @@
 
 #include "types/BackpackCargo.h"
 #include "types/TargetingSystem.h"
-#include "types/WeaponInfo.h"
-#include "types/MagazineInfo.h"
-#include "types/AmmoInfo.h"
+#include "types/Weapon.h"
+#include "types/Magazine.h"
+#include "types/Ammo.h"
+#include "types/UnitLoadout.h"
 
 #include <math.h>
 
@@ -16,10 +17,10 @@ using namespace sandbox::types;
 namespace sandbox {
     namespace common {
         namespace __internal {
-            std::unordered_map<std::string, WeaponInfo> cachedWeaponInfo;
-            std::unordered_map<std::string, MagazineInfo> cachedMagazineInfo;
-            std::unordered_map<std::string, AmmoInfo> cachedAmmoInfo;
-            std::unordered_map<std::string, int> cachedUnitLoadoutInfo;
+            std::unordered_map<std::string, WeaponDetails> cachedWeaponDetails;
+            std::unordered_map<std::string, MagazineDetails> cachedMagazineDetails;
+            std::unordered_map<std::string, AmmoDetails> cachedAmmoDetails;
+            std::unordered_map<std::string, UnitLoadout> cachedUnitLoadoutDetails;
         }
 
         std::vector<int> bitflagsToArray(int flags) {
@@ -84,9 +85,9 @@ namespace sandbox {
             return cargo;
         }
 
-        WeaponInfo getWeaponInfo(const std::string& weaponClass) {
-            auto existingInfo = __internal::cachedWeaponInfo.find(weaponClass);
-            if (existingInfo == __internal::cachedWeaponInfo.end())
+        const WeaponDetails& getWeaponDetails(const std::string& weaponClass) {
+            auto existingInfo = __internal::cachedWeaponDetails.find(weaponClass);
+            if (existingInfo == __internal::cachedWeaponDetails.end())
                 return existingInfo->second;
 
             auto weaponConfig = sqf::config_entry(sqf::config_file()) >> "CfgWeapons" >> weaponClass;
@@ -95,40 +96,36 @@ namespace sandbox {
 
             std::vector<std::string> compatibleMags{ compatibleMagsArr.begin(), compatibleMagsArr.end() };
 
-            // magazine info section
-            //
-            //ss
-
             std::vector<int> targetingSystemFlags = bitflagsToArray(weaponLockSystem);
             std::vector<TargetingSystem> targetingSystems;
             std::transform( targetingSystemFlags.begin(), targetingSystemFlags.end(), targetingSystems.begin(), []( int flag ) { 
                 return static_cast<TargetingSystem>(flag);
             } );
 
-            auto newItem = __internal::cachedWeaponInfo.insert( { weaponClass, { weaponClass, targetingSystems, compatibleMags } } );
+            auto newItem = __internal::cachedWeaponDetails.insert( { weaponClass, { weaponClass, targetingSystems, compatibleMags } } );
 
             return newItem.first->second;
         }
 
-        MagazineInfo getMagazineInfo( const std::string& magazineClass ) {
-            auto existingInfo = __internal::cachedMagazineInfo.find( magazineClass );
-            if (existingInfo == __internal::cachedMagazineInfo.end())
+        const MagazineDetails& getMagazineDetails( const std::string& magazineClass ) {
+            auto existingInfo = __internal::cachedMagazineDetails.find( magazineClass );
+            if (existingInfo == __internal::cachedMagazineDetails.end())
                 return existingInfo->second;
 
             auto magazineConfig = sqf::config_entry( sqf::config_file() ) >> "CfgMagazines" >> magazineClass;
             int magazineSize = (int)sqf::get_number( magazineConfig >> "count" );
             std::string magazineAmmo = sqf::get_text( magazineConfig >> "ammo" );
 
-            AmmoInfo ammo = getAmmoInfo( magazineAmmo );
+            AmmoDetails ammo = getAmmoDetails( magazineAmmo );
 
-            auto newItem = __internal::cachedMagazineInfo.insert( { magazineClass, { magazineClass, magazineSize, magazineSize, ammo } } );
+            auto newItem = __internal::cachedMagazineDetails.insert( { magazineClass, { magazineClass, magazineSize, ammo } } );
 
             return newItem.first->second;
         }
 
-        AmmoInfo getAmmoInfo( const std::string& ammoClass ) {
-            auto existingInfo = __internal::cachedAmmoInfo.find( ammoClass );
-            if (existingInfo == __internal::cachedAmmoInfo.end())
+        const AmmoDetails& getAmmoDetails( const std::string& ammoClass ) {
+            auto existingInfo = __internal::cachedAmmoDetails.find( ammoClass );
+            if (existingInfo == __internal::cachedAmmoDetails.end())
                 return existingInfo->second;
 
             auto ammoConfig = sqf::config_entry( sqf::config_file() ) >> "CfgAmmo" >> ammoClass;
@@ -161,17 +158,17 @@ namespace sandbox {
                 }
             }
 
-            auto newItem = __internal::cachedAmmoInfo.insert( { ammoClass, { ammoClass, ammoUses } } );
+            auto newItem = __internal::cachedAmmoDetails.insert( { ammoClass, { ammoClass, ammoUses } } );
 
             return newItem.first->second;
         }
 
-        int getUnitLoadoutInfo(const std::string& unitClass) {
+        UnitLoadout getUnitLoadoutDetails(const std::string& unitClass) {
             auto config = sqf::config_entry(sqf::config_file());
             auto cfgVehicles = config >> "CfgVehicles";
 
-            auto existingInfo = __internal::cachedUnitLoadoutInfo.find(unitClass);
-            if (existingInfo == __internal::cachedUnitLoadoutInfo.end())
+            auto existingInfo = __internal::cachedUnitLoadoutDetails.find(unitClass);
+            if (existingInfo == __internal::cachedUnitLoadoutDetails.end())
                 return existingInfo->second;
 
             auto unitConfig = config >> unitClass;
@@ -196,19 +193,17 @@ namespace sandbox {
                 return item.classname;
             } );
 
-            // get weapon info
+            std::vector<Weapon> unitWeapons;
+            std::vector<Magazine> unitMagazines;
+            std::transform(weapons.begin(), weapons.end(), unitWeapons.end(), [](const std::string& weaponClass) -> Weapon { return { weaponClass }; });
+            std::transform(magazines.begin(), magazines.end(), unitMagazines.end(), [](const std::string& magazineClass) -> Magazine {
+                MagazineDetails details = getMagazineDetails(magazineClass);
+                return { magazineClass, details.size, details.size };
+            });
 
-            for (auto& weapon : weapons) {
-                auto weaponInfo = getWeaponInfo(weapon);
+            auto newItem = __internal::cachedUnitLoadoutDetails.insert({ unitClass, { unitWeapons, unitMagazines } });
 
-                int magsLeft = (int)weaponInfo.compatibleMagazines.size();
-                int i = 0;
-                while (i < magsLeft) {
-                    auto magInfo = getMagazineInfo( weaponInfo.compatibleMagazines[i] );
-                }
-            }
-
-            return -1;
+            return newItem.first->second;
         }
 
     }
