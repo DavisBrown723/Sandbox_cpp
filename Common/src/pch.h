@@ -6,6 +6,7 @@
 #include <functional>
 #include <algorithm>
 #include <exception>
+#include <optional>
 
 #include "intercept.hpp"
 #include "entt.hpp"
