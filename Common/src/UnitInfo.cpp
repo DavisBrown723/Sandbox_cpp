@@ -25,7 +25,7 @@ namespace sandbox {
         std::vector<int> bitflagsToArray(int flags) {
             std::vector<int> bitflags;
             for (int i = 0; i < 23; i++) {
-                int flag = std::pow(2, i);
+                int flag = (int)std::pow(2, i);
 
                 if (flag > flags) break;
 
@@ -91,7 +91,7 @@ namespace sandbox {
 
             auto weaponConfig = sqf::config_entry(sqf::config_file()) >> "CfgWeapons" >> weaponClass;
             auto compatibleMagsArr = sqf::get_array(weaponConfig >> "magazines").to_array();
-            auto weaponLockSystem = sqf::get_number(weaponConfig >> "weaponLockSystem");
+            int weaponLockSystem = (int)sqf::get_number(weaponConfig >> "weaponLockSystem");
 
             std::vector<std::string> compatibleMags{ compatibleMagsArr.begin(), compatibleMagsArr.end() };
 
@@ -116,7 +116,7 @@ namespace sandbox {
                 return existingInfo->second;
 
             auto magazineConfig = sqf::config_entry( sqf::config_file() ) >> "CfgMagazines" >> magazineClass;
-            int magazineSize = sqf::get_number( magazineConfig >> "count" );
+            int magazineSize = (int)sqf::get_number( magazineConfig >> "count" );
             std::string magazineAmmo = sqf::get_text( magazineConfig >> "ammo" );
 
             AmmoInfo ammo = getAmmoInfo( magazineAmmo );
@@ -134,26 +134,29 @@ namespace sandbox {
             auto ammoConfig = sqf::config_entry( sqf::config_file() ) >> "CfgAmmo" >> ammoClass;
 
             std::vector<AmmoUse> ammoUses;
-            int ammoUsageFlags = sqf::get_number( ammoConfig >> "aiAmmoUsageFlags" );
+            int ammoUsageFlags = (int)sqf::get_number( ammoConfig >> "aiAmmoUsageFlags" );
             if (ammoUsageFlags != 0) {
                 std::vector<int> ammoBitflagArr = bitflagsToArray( ammoUsageFlags );
                 std::transform( ammoBitflagArr.begin(), ammoBitflagArr.end(), ammoUses.begin(), []( int flag ) {
                     return static_cast<AmmoUse>(flag);
                 } );
             } else {
-                int airLock = sqf::get_number( ammoConfig >> "airLock" );
+                int airLock = (int)sqf::get_number( ammoConfig >> "airLock" );
                 switch (airLock) {
                     case 0:
                     {
                         ammoUses.insert( ammoUses.end(), { AmmoUse::Infantry, AmmoUse::Vehicles, AmmoUse::Armor } );
+                        break;
                     }
                     case 1:
                     {
                         ammoUses.insert( ammoUses.end(), { AmmoUse::Vehicles, AmmoUse::Armor, AmmoUse::Air } );
+                        break;
                     }
                     case 2:
                     {
                         ammoUses.push_back( AmmoUse::Air );
+                        break;
                     }
                 }
             }
@@ -198,7 +201,7 @@ namespace sandbox {
             for (auto& weapon : weapons) {
                 auto weaponInfo = getWeaponInfo(weapon);
 
-                int magsLeft = weaponInfo.compatibleMagazines.size();
+                int magsLeft = (int)weaponInfo.compatibleMagazines.size();
                 int i = 0;
                 while (i < magsLeft) {
                     auto magInfo = getMagazineInfo( weaponInfo.compatibleMagazines[i] );
