@@ -22,11 +22,11 @@ using namespace sandbox::types;
 
 namespace sandbox {
 
-    std::vector<entt::entity> GroupManager::createUnitsForGroup(types::ConfigGroup group) {
+    std::vector<entt::entity> GroupManager::createUnitsForGroup(types::ConfigGroup group, entt::entity owningGroup) {
         std::vector<entt::entity> units;
         for (auto& configUnit : group.units) {
             auto entity = Core::EntityRegistry.create();
-            Core::EntityRegistry.emplace<Unit>(entity, configUnit.vehicle, entt::null, intercept::sqf::obj_null(), 0); // #TODO: cache null values in sandbox::Config
+            Core::EntityRegistry.emplace<Unit>(entity, configUnit.vehicle, owningGroup, intercept::sqf::obj_null(), 0); // #TODO: cache null values in sandbox::Config
             Core::EntityRegistry.emplace<UnitLoadout>(entity, common::getUnitLoadoutDetails(configUnit.vehicle));
 
             units.push_back(entity);
@@ -49,7 +49,7 @@ namespace sandbox {
         Core::EntityRegistry.emplace<Speed>(entity, 4.3);
         Core::EntityRegistry.emplace<Group>(entity,
             intercept::sqf::grp_null(),
-            createUnitsForGroup(group),
+            createUnitsForGroup(group, entity),
             400
         );
 

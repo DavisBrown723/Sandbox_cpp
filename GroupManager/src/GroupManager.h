@@ -13,7 +13,7 @@ namespace sandbox {
     class GroupManager {
         private:
         
-        std::vector<entt::entity> createUnitsForGroup(types::ConfigGroup group);
+        std::vector<entt::entity> createUnitsForGroup(types::ConfigGroup group, entt::entity owningGroup);
 
         public:
 
