@@ -92,10 +92,10 @@
     <ClInclude Include="src\Vehicles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\types\VehicleSeats.h">
+    <ClInclude Include="src\types\TurretPath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\types\TurretPath.h">
+    <ClInclude Include="src\types\VehicleSeats.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
