@@ -58,3 +58,9 @@ void intercept::mission_ended() {
 void intercept::handle_unload() {
     sandbox::Core::Get().OnPluginUnloaded();
 }
+
+//
+
+void intercept::killed(intercept::types::object& unit, intercept::types::object& killer) {
+    Core::Get().OnKilled(unit, killer);
+}

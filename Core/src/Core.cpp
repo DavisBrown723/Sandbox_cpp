@@ -7,6 +7,10 @@
 #include "VirtualSpace/src/SpawnSystem.h"
 #include "GroupManager/src/GroupManager.h"
 
+#ifdef INCLUDE_DEMO
+    #include "Demo/src/Demo.h"
+#endif
+
 namespace sandbox {
 
     entt::handle Core::GetEntityHandle(entt::entity entity) {
@@ -16,6 +20,9 @@ namespace sandbox {
     void Core::OnPreStart() {
         m_systems.emplace_back(common::Common::Get());
         m_systems.emplace_back(m_spawnSystem);
+        #ifdef INCLUDE_DEMO
+            m_systems.emplace_back(m_demo);
+        #endif
 
             for (auto& system : m_systems)
                 system.get().OnPreStart();
@@ -80,6 +87,10 @@ namespace sandbox {
 
     void Core::OnPluginUnloaded() {
 
+    }
+
+    void Core::OnKilled(intercept::types::object& unit, intercept::types::object& killer) {
+        OnKilledEH(unit, killer);
     }
 
     void Core::Initialize() {

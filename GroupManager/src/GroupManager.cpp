@@ -2,6 +2,8 @@
 
 #include "GroupManager.h"
 
+#include "signal.hpp"
+
 #include "components/Group.h"
 #include "components/Unit.h"
 #include "Common/src/types/Faction.h"
@@ -19,14 +21,23 @@
 
 using namespace sandbox::components;
 using namespace sandbox::types;
+using namespace intercept;
 
 namespace sandbox {
+
+    GroupManager::GroupManager() {
+        OnKilledEHConnection = Core::OnKilledEH.connect(&GroupManager::onUnitKilled, this);
+    }
+
+    GroupManager::~GroupManager() {
+        OnKilledEHConnection.disconnect();
+    }
 
     std::vector<entt::entity> GroupManager::createUnitsForGroup(types::ConfigGroup group, entt::entity owningGroup) {
         std::vector<entt::entity> units;
         for (auto& configUnit : group.units) {
             auto entity = Core::EntityRegistry.create();
-            Core::EntityRegistry.emplace<Unit>(entity, configUnit.vehicle, owningGroup, intercept::sqf::obj_null(), 0); // #TODO: cache null values in sandbox::Config
+            Core::EntityRegistry.emplace<Unit>(entity, configUnit.vehicle, owningGroup, intercept::sqf::obj_null(), 0.f); // #TODO: cache null values in sandbox::Config
             Core::EntityRegistry.emplace<UnitLoadout>(entity, common::getUnitLoadoutDetails(configUnit.vehicle));
 
             units.push_back(entity);
@@ -61,13 +72,95 @@ namespace sandbox {
     }
 
     void GroupManager::spawnGroup(entt::handle entity) {
+        auto& group = Core::EntityRegistry.get<Group>(entity);
+        auto& pos = Core::EntityRegistry.get<Position3D>(entity);
+        auto& allegiance = Core::EntityRegistry.get<Allegiance>(entity);
+
+        group.group = sqf::create_group(allegiance.side->sideValue, true);
+        for (auto& unit : group.units) {
+            spawnUnit(unit, pos, group.group);
+        }
         intercept::sqf::system_chat("WE SPAWNED BABY");
     }
 
     void GroupManager::despawnGroup(entt::handle entity) {
+        auto& group = Core::EntityRegistry.get<Group>(entity);
+
+        for (auto& unit : group.units) {
+            despawnUnit(unit);
+        }
+
+        sqf::delete_group(group.group);
+
         intercept::sqf::system_chat("OK WE DESPAWNED FUCKKKK");
     }
 
+    void GroupManager::spawnUnit(entt::entity entity, Position3D& pos, intercept::types::group group) {
+        auto& unit = Core::EntityRegistry.get<Unit>(entity);
 
+        unit.unitObject = sqf::create_unit(group, unit.classname, pos, {}, 0.f, "FORM");
+        sqf::set_damage(unit.unitObject, unit.damage);
+
+        auto x = GroupManager::UnitEntityIDVar;
+
+        sqf::system_chat(std::string("ENTITY ID = ") + std::to_string((int)entity));
+        sqf::set_variable(unit.unitObject, GroupManager::UnitEntityIDVar, game_value((int)entity));
+    }
+
+    void GroupManager::despawnUnit(entt::entity entity) {
+        auto& unit = Core::EntityRegistry.get<Unit>(entity);
+
+        unit.damage = sqf::damage(unit.unitObject);
+        
+        sqf::delete_vehicle(unit.unitObject);
+    }
+
+    void GroupManager::groupRemoveUnit(entt::entity groupEntity, entt::entity unitEntity) {
+        auto& group = Core::EntityRegistry.get<Group>(groupEntity);
+        
+        auto iter = std::find(group.units.begin(), group.units.end(), unitEntity);
+        if (iter != group.units.end())
+            group.units.erase(iter);
+    }
+
+    void GroupManager::onUnitKilled(intercept::types::object& unit, intercept::types::object& killer) {
+        int entityID = sqf::get_variable(unit, GroupManager::UnitEntityIDVar, -1);
+        if (entityID != -1) {
+            unregisterUnit(entt::entity(entityID));
+        }
+    }
+
+    void GroupManager::unregisterUnit(entt::entity entity) {
+        auto& unit = Core::EntityRegistry.get<Unit>(entity);
+        auto& group = Core::EntityRegistry.get<Group>(unit.group);
+
+        groupRemoveUnit(unit.group, entity);
+
+        bool deleteGroup = group.units.empty();
+        entt::entity groupToDelete = unit.group;
+
+        Core::EntityRegistry.destroy(entity);
+
+        if (deleteGroup)
+            unregisterGroup(groupToDelete);
+    }
+
+    void GroupManager::unregisterGroup(entt::entity entity) {
+        auto& group = Core::EntityRegistry.get<Group>(entity);
+        auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
+
+        for (auto& unitEntity : group.units) {
+            if (spawning.active) {
+                auto& unit = Core::EntityRegistry.get<Unit>(unitEntity);
+                sqf::delete_vehicle(unit.unitObject);
+            }
+            unregisterUnit(unitEntity);
+        }
+
+        if (spawning.active)
+            sqf::delete_group(group.group);
+
+        Core::EntityRegistry.destroy(entity);
+    }
 
 }

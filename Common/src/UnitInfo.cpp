@@ -30,15 +30,17 @@ namespace sandbox {
 
                 if (flag > flags) break;
 
-                bitflags.push_back(flags & flag);
+                int result = flags & flag;
+                if (result != 0)
+                    bitflags.push_back(flags & flag);
             }
             return bitflags;
         }
 
         BackpackCargo getBackpackCargo(const std::string& backpackClass, bool includeItems, bool includeMagazines, bool includeWeapons) {
-            auto backpackConfig = sqf::config_entry(sqf::config_file()) >> backpackClass;
+            auto backpackConfig = sqf::config_entry(sqf::config_file()) >> "CfgVehicles" >> backpackClass;
             if (!sqf::is_class(backpackConfig))
-                throw std::invalid_argument("getBackpackCargo(): Backpack class does not exist - " + backpackClass);
+                return BackpackCargo();
 
             BackpackCargo cargo;
             sqf::config_entry itemConfig;
@@ -61,7 +63,7 @@ namespace sandbox {
                 for (int i = 0; i < backpackItemsConfig.count(); i++) {
                     itemConfig = sqf::select(backpackItemsConfig, i);
                     if (sqf::is_class(itemConfig)) {
-                        cargo.items.emplace_back(
+                        cargo.magazines.emplace_back(
                             sqf::get_text(itemConfig >> "magazine"),
                             sqf::get_number(itemConfig >> "count")
                         );
@@ -74,7 +76,7 @@ namespace sandbox {
                 for (int i = 0; i < backpackItemsConfig.count(); i++) {
                     itemConfig = sqf::select(backpackItemsConfig, i);
                     if (sqf::is_class(itemConfig)) {
-                        cargo.items.emplace_back(
+                        cargo.weapons.emplace_back(
                             sqf::get_text(itemConfig >> "weapon"),
                             sqf::get_number(itemConfig >> "count")
                         );
@@ -87,7 +89,7 @@ namespace sandbox {
 
         const WeaponDetails& getWeaponDetails(const std::string& weaponClass) {
             auto existingInfo = __internal::cachedWeaponDetails.find(weaponClass);
-            if (existingInfo == __internal::cachedWeaponDetails.end())
+            if (existingInfo != __internal::cachedWeaponDetails.end())
                 return existingInfo->second;
 
             auto weaponConfig = sqf::config_entry(sqf::config_file()) >> "CfgWeapons" >> weaponClass;
@@ -109,7 +111,7 @@ namespace sandbox {
 
         const MagazineDetails& getMagazineDetails( const std::string& magazineClass ) {
             auto existingInfo = __internal::cachedMagazineDetails.find( magazineClass );
-            if (existingInfo == __internal::cachedMagazineDetails.end())
+            if (existingInfo != __internal::cachedMagazineDetails.end())
                 return existingInfo->second;
 
             auto magazineConfig = sqf::config_entry( sqf::config_file() ) >> "CfgMagazines" >> magazineClass;
@@ -125,7 +127,7 @@ namespace sandbox {
 
         const AmmoDetails& getAmmoDetails( const std::string& ammoClass ) {
             auto existingInfo = __internal::cachedAmmoDetails.find( ammoClass );
-            if (existingInfo == __internal::cachedAmmoDetails.end())
+            if (existingInfo != __internal::cachedAmmoDetails.end())
                 return existingInfo->second;
 
             auto ammoConfig = sqf::config_entry( sqf::config_file() ) >> "CfgAmmo" >> ammoClass;
@@ -134,7 +136,7 @@ namespace sandbox {
             int ammoUsageFlags = (int)sqf::get_number( ammoConfig >> "aiAmmoUsageFlags" );
             if (ammoUsageFlags != 0) {
                 std::vector<int> ammoBitflagArr = bitflagsToArray( ammoUsageFlags );
-                std::transform( ammoBitflagArr.begin(), ammoBitflagArr.end(), ammoUses.begin(), []( int flag ) {
+                std::transform( ammoBitflagArr.begin(), ammoBitflagArr.end(), std::back_inserter(ammoUses), []( int flag ) {
                     return static_cast<AmmoUse>(flag);
                 } );
             } else {
@@ -164,39 +166,45 @@ namespace sandbox {
         }
 
         UnitLoadout getUnitLoadoutDetails(const std::string& unitClass) {
-            auto config = sqf::config_entry(sqf::config_file());
-            auto cfgVehicles = config >> "CfgVehicles";
+            auto config = sqf::config_entry(sqf::config_file()) >> "CfgVehicles";
 
             auto existingInfo = __internal::cachedUnitLoadoutDetails.find(unitClass);
-            if (existingInfo == __internal::cachedUnitLoadoutDetails.end())
+            if (existingInfo != __internal::cachedUnitLoadoutDetails.end())
                 return existingInfo->second;
 
             auto unitConfig = config >> unitClass;
             auto weaponsFromConfig = sqf::get_array(unitConfig >> "weapons").to_array();
             auto magazinesFromConfig = sqf::get_array(unitConfig >> "magazines").to_array();
 
-            std::remove_if(weaponsFromConfig.begin(), weaponsFromConfig.end(), [](intercept::types::game_value str) { return str == "Throw" || str == "Put" || str == "Binocular"; });
-
             std::vector<std::string> weapons{ weaponsFromConfig.begin(), weaponsFromConfig.end() };
             std::vector<std::string> magazines{ magazinesFromConfig.begin(), magazinesFromConfig.end() };
+
+            auto deleteStart = std::remove_if(weapons.begin(), weapons.end(), [](std::string_view str) { return str == "Throw" || str == "Put" || str == "Binocular"; });
+            weapons.erase(deleteStart, weapons.end());
 
             // add weapons and magazines from backpack
 
             std::string backpack = sqf::get_text(unitConfig >> "backpack");
             types::BackpackCargo backpackCargo = getBackpackCargo(backpack, false, true, true);
 
-            std::transform( backpackCargo.items.begin(), backpackCargo.items.end(), weapons.end(), []( types::ItemWithCount& item ) {
+            std::transform( backpackCargo.items.begin(), backpackCargo.items.end(), std::back_inserter(weapons), []( types::ItemWithCount& item ) {
                 return item.classname;
             } );
 
-            std::transform( backpackCargo.magazines.begin(), backpackCargo.magazines.end(), magazines.end(), []( types::ItemWithCount& item ) {
+            std::transform( backpackCargo.magazines.begin(), backpackCargo.magazines.end(), std::back_inserter(magazines), []( types::ItemWithCount& item ) {
                 return item.classname;
             } );
+
+            // convert data into real representations that can be 'used'
 
             std::vector<Weapon> unitWeapons;
             std::vector<Magazine> unitMagazines;
-            std::transform(weapons.begin(), weapons.end(), unitWeapons.end(), [](const std::string& weaponClass) -> Weapon { return { weaponClass }; });
-            std::transform(magazines.begin(), magazines.end(), unitMagazines.end(), [](const std::string& magazineClass) -> Magazine {
+
+            unitWeapons.reserve(weapons.size());
+            unitMagazines.reserve(magazines.size());
+
+            std::transform(weapons.begin(), weapons.end(), std::back_inserter(unitWeapons), [](const std::string& weaponClass) -> Weapon { return { weaponClass }; });
+            std::transform(magazines.begin(), magazines.end(), std::back_inserter(unitMagazines), [](const std::string& magazineClass) -> Magazine {
                 MagazineDetails details = getMagazineDetails(magazineClass);
                 return { magazineClass, details.size, details.size };
             });

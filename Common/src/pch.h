@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <exception>
 #include <optional>
+#include <iterator>
 
 #include "intercept.hpp"
 #include "entt.hpp"

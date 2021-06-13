@@ -49,7 +49,14 @@ namespace sandbox {
             }
         }
 
-        for (auto entity : m_activeEntities) {
+        auto iter = m_activeEntities.begin();
+        while (iter != m_activeEntities.end()) {
+            if (!Core::EntityRegistry.valid(*iter)) {
+                iter = m_activeEntities.erase(iter);
+                continue;
+            }
+
+            auto entity = *iter;
             auto position = Core::EntityRegistry.get<Position3D>(entity);
 
             for (auto& source : m_spawnSources) {
@@ -57,6 +64,8 @@ namespace sandbox {
                     addToDespawnQueue(entity);
                 }
             }
+
+            iter++;
         }
     }
 

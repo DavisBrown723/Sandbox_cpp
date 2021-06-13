@@ -25,7 +25,7 @@ namespace sandbox {
             static bool spawned = false;
             if (intercept::sqf::time() > 15 && !spawned) {
                 auto faction = Config::getFaction("BLU_F");
-                Core::GetGroupManager().createGroup(faction, faction->groupCategories["Infantry"].groups["BUS_InfAssault"], { 500, 500, 0 });
+                Core::GetGroupManager().createGroup(faction, faction->groupCategories["Infantry"].groups["BUS_InfTeam_AA"], { 0, 0, 0 });
                 spawned = true;
             }
         }

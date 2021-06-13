@@ -14,7 +14,7 @@ namespace sandbox {
             std::string classname;
             entt::entity group;
             intercept::types::object unitObject;
-            int damage;
+            float damage;
         };
 
     }
