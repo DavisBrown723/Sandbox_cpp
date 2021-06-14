@@ -28,10 +28,13 @@ namespace sandbox {
         inline const static std::string UnitEntityIDVar = "sandbox_entityID";
 
         entt::handle createGroup(types::Faction* faction, types::ConfigGroup group, types::Vector3 position);
-        void createVehicle();
+        entt::handle createVehicle( const std::string& vehicleClass, types::Faction* faction, types::Vector3 position );
 
         void spawnGroup(entt::handle entity);
         void despawnGroup(entt::handle entity);
+
+        void spawnVehicle( entt::handle entity );
+        void despawnVehicle( entt::handle entity );
 
         void spawnUnit(entt::entity entity, components::Position3D& pos, intercept::types::group group);
         void despawnUnit(entt::entity entity);

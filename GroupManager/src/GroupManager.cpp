@@ -6,11 +6,14 @@
 
 #include "components/Group.h"
 #include "components/Unit.h"
+#include "components/Vehicle.h"
 #include "Common/src/types/Faction.h"
 #include "Common/src/types/ConfigGroup.h"
 #include "Common/src/types/UnitLoadout.h"
 #include "Common/src/types/VehicleSeats.h"
+#include "Common/src/types/Vehicle.h"
 #include "Common/src/UnitInfo.h"
+#include "Common/src/Vehicles.h"
 #include "Core/src/Core.h"
 #include "Core/src/components/Position.h"
 #include "Core/src/components/EntityBase.h"
@@ -67,8 +70,20 @@ namespace sandbox {
         return Core::GetEntityHandle(entity);
     }
 
-    void GroupManager::createVehicle() {
+    entt::handle GroupManager::createVehicle( const std::string& vehicleClass, types::Faction* faction, types::Vector3 position ) {
+        auto entity = Core::EntityRegistry.create();
+        Core::EntityRegistry.emplace<EntityBase>( entity, EntityType::Vehicle );
+        Core::EntityRegistry.emplace<Position3D>( entity, position );
+        Core::EntityRegistry.emplace<Spawning>( entity,
+            false,
+            std::bind( &GroupManager::spawnVehicle, this, std::placeholders::_1 ),
+            std::bind( &GroupManager::despawnVehicle, this, std::placeholders::_1 )
+        );
+        Core::EntityRegistry.emplace<Allegiance>( entity, faction->side, faction );
+        Core::EntityRegistry.emplace<Speed>( entity, common::findVehicleSpeed( vehicleClass ) );
+        Core::EntityRegistry.emplace<Vehicle>( entity, vehicleClass, common::findVehicleType(vehicleClass), false );
 
+        return Core::GetEntityHandle( entity );
     }
 
     void GroupManager::spawnGroup(entt::handle entity) {
@@ -93,6 +108,14 @@ namespace sandbox {
         sqf::delete_group(group.group);
 
         intercept::sqf::system_chat("OK WE DESPAWNED FUCKKKK");
+    }
+
+    void GroupManager::spawnVehicle( entt::handle entity ) {
+
+    }
+
+    void GroupManager::despawnVehicle( entt::handle entity ) {
+
     }
 
     void GroupManager::spawnUnit(entt::entity entity, Position3D& pos, intercept::types::group group) {

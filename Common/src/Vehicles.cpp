@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "types/VehicleSeats.h"
+#include "Vehicles.h"
 
 using namespace intercept::sqf;
 using namespace sandbox::types;
@@ -36,6 +37,45 @@ namespace sandbox {
                 seats.turrets.push_back(VehicleSeat{ SeatPath{ .turretPath = rv_turret_path(seat) } });
 
             return seats;
+        }
+
+        int findVehicleSpeed( const std::string& vehicleClass ) {
+            return (int)get_number( config_entry( config_file() ) >> vehicleClass >> "maxSpeed" );
+        }
+
+        types::VehicleType findVehicleType( const std::string& vehicleClass ) {
+            if (is_kind_of( vehicleClass, "Man" ))
+                return VehicleType::Man;
+            else if (is_kind_of( vehicleClass, "Ship" ))
+                return VehicleType::Ship;
+            else if (is_kind_of( vehicleClass, "Helicopter" ))
+                return VehicleType::Helicopter;
+            else if (is_kind_of( vehicleClass, "Plane" ))
+                return VehicleType::Plane;
+            else if (is_kind_of( vehicleClass, "StaticWeapon" ))
+                return VehicleType::StaticWeapon;
+
+            VehicleType type;
+            if (is_kind_of( vehicleClass, "Tank" ))
+                type = VehicleType::Tank;
+            else if (is_kind_of( vehicleClass, "Armored" ) || is_kind_of( vehicleClass, "Wheeled_APC_F" ))
+                type = VehicleType::Armored;
+            else if (is_kind_of( vehicleClass, "Truck" ) || is_kind_of( vehicleClass, "Truck_F" ))
+                type = VehicleType::Truck;
+            else if (is_kind_of( vehicleClass, "Car" ))
+                type = VehicleType::Car;
+
+            auto vehicleConfig = config_entry( config_file() ) >> "CfgVehicles" >> vehicleClass;
+            int maxElevation = (int)get_number( vehicleConfig >> "Turrets" >> "MainTurret" >> "maxElev" );
+            bool hasArtyScanner = get_number( vehicleConfig >> "artilleryScanner" ) > 0;
+            if (maxElevation > 65) {
+                if (hasArtyScanner)
+                    return VehicleType::Artillery;
+                else
+                    return VehicleType::AntiAir;
+            }
+
+            return type;
         }
 
     }
