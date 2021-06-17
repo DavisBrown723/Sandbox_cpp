@@ -101,5 +101,8 @@
     <ClInclude Include="src\types\Ammo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\types\Vehicle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

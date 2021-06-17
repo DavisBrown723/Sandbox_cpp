@@ -287,6 +287,7 @@
     <ClInclude Include="src\types\TargetingSystem.h" />
     <ClInclude Include="src\types\TurretPath.h" />
     <ClInclude Include="src\types\UnitLoadout.h" />
+    <ClInclude Include="src\types\Vehicle.h" />
     <ClInclude Include="src\types\VehicleSeats.h" />
     <ClInclude Include="src\types\Weapon.h" />
     <ClInclude Include="src\UnitInfo.h" />

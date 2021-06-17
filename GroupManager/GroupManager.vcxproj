@@ -234,8 +234,12 @@
     <ClInclude Include="src\components\Group.h" />
     <ClInclude Include="src\components\SeatAssignment.h" />
     <ClInclude Include="src\components\Unit.h" />
+    <ClInclude Include="src\components\Vehicle.h" />
+    <ClInclude Include="src\components\Waypoints.h" />
     <ClInclude Include="src\GroupManager.h" />
     <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\types\Waypoint.h" />
+    <ClInclude Include="src\WaypointSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GroupManager.cpp" />
@@ -250,6 +254,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\WaypointSystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
