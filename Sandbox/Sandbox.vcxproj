@@ -166,8 +166,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>intercept_client.lib;Core.lib;Common.lib;VirtualSpace.lib;GroupManager.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)VirtualSpace\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)GroupManager\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Core\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Demo\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)\Dependencies\intercept\build\win32\intercept_client\Debug\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>intercept_client.lib;Core.lib;Common.lib;VirtualSpace.lib;GroupManager.lib;Pathfinding.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)VirtualSpace\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)GroupManager\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Core\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Demo\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Pathfinding\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)\Dependencies\intercept\build\win32\intercept_client\Debug\</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -232,8 +232,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>intercept_client.lib;Core.lib;Common.lib;VirtualSpace.lib;GroupManager.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)VirtualSpace\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)GroupManager\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Core\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Demo\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Dependencies\intercept\build\win64\intercept_client\Debug\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>intercept_client.lib;Core.lib;Common.lib;VirtualSpace.lib;GroupManager.lib;Pathfinding.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)VirtualSpace\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)GroupManager\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Core\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Demo\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Pathfinding\bin\$(Platform)\$(ConfigurationName)\;$(SolutionDir)Dependencies\intercept\build\win64\intercept_client\Debug\</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>

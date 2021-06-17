@@ -22,6 +22,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GroupManager", "GroupManage
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", "Demo\Demo.vcxproj", "{4999EF7A-51F8-453F-A3FC-ECA1B3629F47}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pathfinding", "Pathfinding\Pathfinding.vcxproj", "{01F875F1-6229-4325-9B57-D0F7857D5185}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -100,6 +102,18 @@ Global
 		{4999EF7A-51F8-453F-A3FC-ECA1B3629F47}.Demo|x86.Build.0 = Demo|Win32
 		{4999EF7A-51F8-453F-A3FC-ECA1B3629F47}.Release|x64.ActiveCfg = Release|x64
 		{4999EF7A-51F8-453F-A3FC-ECA1B3629F47}.Release|x86.ActiveCfg = Release|Win32
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Debug|x64.ActiveCfg = Debug|x64
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Debug|x64.Build.0 = Debug|x64
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Debug|x86.ActiveCfg = Debug|Win32
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Debug|x86.Build.0 = Debug|Win32
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Demo|x64.ActiveCfg = Debug|x64
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Demo|x64.Build.0 = Debug|x64
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Demo|x86.ActiveCfg = Debug|Win32
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Demo|x86.Build.0 = Debug|Win32
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Release|x64.ActiveCfg = Release|x64
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Release|x64.Build.0 = Release|x64
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Release|x86.ActiveCfg = Release|Win32
+		{01F875F1-6229-4325-9B57-D0F7857D5185}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
