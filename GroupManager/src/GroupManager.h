@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <tuple>
+
 #include "entt.hpp"
 #include "intercept.hpp"
 #include "signal.hpp"
@@ -16,7 +19,7 @@ namespace sandbox {
     class GroupManager {
         private:
         
-        std::vector<entt::entity> createUnitsForGroup(types::ConfigGroup group, entt::entity owningGroup);
+        void createUnitsForGroup( entt::entity owningGroup, types::ConfigGroup group, Faction* faction, const types::Vector3& position );
 
         sigslot::connection OnKilledEHConnection;
 
@@ -27,8 +30,9 @@ namespace sandbox {
 
         inline const static std::string UnitEntityIDVar = "sandbox_entityID";
 
-        entt::handle createGroup(types::Faction* faction, types::ConfigGroup group, types::Vector3 position);
-        entt::handle createVehicle( const std::string& vehicleClass, types::Faction* faction, types::Vector3 position );
+        entt::entity createUnit(const std::string& unitClass, entt::entity owningGroup );
+        entt::handle createGroup(types::Faction* faction, types::ConfigGroup group, const types::Vector3& position);
+        entt::handle createVehicle( const std::string& vehicleClass, types::Faction* faction, const types::Vector3& position );
 
         void spawnGroup(entt::handle entity);
         void despawnGroup(entt::handle entity);
@@ -40,6 +44,9 @@ namespace sandbox {
         void despawnUnit(entt::entity entity);
 
         void groupRemoveUnit(entt::entity groupEntity, entt::entity unitEntity);
+
+        void assignVehicleToGroup( entt::entity group, entt::entity vehicle );
+        void assignGroupToVehicleCargo( entt::entity group, entt::entity vehicle );
 
         void onUnitKilled(intercept::types::object& unit, intercept::types::object& killer);
 

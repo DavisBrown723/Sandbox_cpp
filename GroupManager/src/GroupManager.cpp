@@ -36,52 +36,65 @@ namespace sandbox {
         OnKilledEHConnection.disconnect();
     }
 
-    std::vector<entt::entity> GroupManager::createUnitsForGroup(types::ConfigGroup group, entt::entity owningGroup) {
-        std::vector<entt::entity> units;
+    void GroupManager::createUnitsForGroup( entt::entity owningGroup, types::ConfigGroup group, Faction* faction, const types::Vector3& position ) {
         for (auto& configUnit : group.units) {
-            auto entity = Core::EntityRegistry.create();
-            Core::EntityRegistry.emplace<Unit>(entity, configUnit.vehicle, owningGroup, intercept::sqf::obj_null(), 0.f); // #TODO: cache null values in sandbox::Config
-            Core::EntityRegistry.emplace<UnitLoadout>(entity, common::getUnitLoadoutDetails(configUnit.vehicle));
-
-            units.push_back(entity);
+            if (sqf::is_kind_of( configUnit.vehicle, "Man" )) {
+                createUnit( configUnit.vehicle, owningGroup );
+            } else {
+                createVehicle( configUnit.vehicle, faction, position );
+                // assign to group
+            }
         }
-
-        return units;
     }
 
-    entt::handle GroupManager::createGroup(Faction* faction, types::ConfigGroup group, types::Vector3 position) {
+    entt::entity GroupManager::createUnit( const std::string& unitClass, entt::entity owningGroup ) {
+        auto entity = Core::EntityRegistry.create();
+        Core::EntityRegistry.emplace<Unit>( entity, unitClass, owningGroup, intercept::sqf::obj_null(), 0.f ); // #TODO: cache null values in sandbox::Config
+        Core::EntityRegistry.emplace<UnitLoadout>( entity, common::getUnitLoadoutDetails( unitClass ) );
+
+        return entity;
+    }
+
+    entt::handle GroupManager::createGroup(Faction* faction, types::ConfigGroup group, const types::Vector3& position) {
         auto entity = Core::EntityRegistry.create();
         Core::EntityRegistry.emplace<EntityBase>(entity, EntityType::Group);
         Core::EntityRegistry.emplace<Position3D>(entity, position);
         Core::EntityRegistry.emplace<Spawning>(entity,
-            false,
+            SpawnState::Inactive,
             std::bind(&GroupManager::spawnGroup, this, std::placeholders::_1),
             std::bind(&GroupManager::despawnGroup, this, std::placeholders::_1)
         );
 
         Core::EntityRegistry.emplace<Allegiance>(entity, faction->side, faction);
         Core::EntityRegistry.emplace<Speed>(entity, 4.3);
+
+        std::vector<ConfigGroupUnit> units;
+        std::vector<ConfigGroupUnit> vehicles;
+
         Core::EntityRegistry.emplace<Group>(entity,
             intercept::sqf::grp_null(),
-            createUnitsForGroup(group, entity),
+            std::vector<entt::entity>(),
             400
         );
+
+        createUnitsForGroup( entity, group, faction, position );
 
         return Core::GetEntityHandle(entity);
     }
 
-    entt::handle GroupManager::createVehicle( const std::string& vehicleClass, types::Faction* faction, types::Vector3 position ) {
+    entt::handle GroupManager::createVehicle( const std::string& vehicleClass, types::Faction* faction, const types::Vector3& position ) {
         auto entity = Core::EntityRegistry.create();
         Core::EntityRegistry.emplace<EntityBase>( entity, EntityType::Vehicle );
         Core::EntityRegistry.emplace<Position3D>( entity, position );
         Core::EntityRegistry.emplace<Spawning>( entity,
-            false,
+            SpawnState::Inactive,
             std::bind( &GroupManager::spawnVehicle, this, std::placeholders::_1 ),
             std::bind( &GroupManager::despawnVehicle, this, std::placeholders::_1 )
         );
         Core::EntityRegistry.emplace<Allegiance>( entity, faction->side, faction );
         Core::EntityRegistry.emplace<Speed>( entity, common::findVehicleSpeed( vehicleClass ) );
-        Core::EntityRegistry.emplace<Vehicle>( entity, vehicleClass, common::findVehicleType(vehicleClass), false );
+        Core::EntityRegistry.emplace<Vehicle>( entity, vehicleClass, common::findVehicleType(vehicleClass), EngineState::EngineOff );
+        Core::EntityRegistry.emplace<VehicleSeats>( entity, common::findVehicleSeats( vehicleClass ) );
 
         return Core::GetEntityHandle( entity );
     }
@@ -144,6 +157,14 @@ namespace sandbox {
         auto iter = std::find(group.units.begin(), group.units.end(), unitEntity);
         if (iter != group.units.end())
             group.units.erase(iter);
+    }
+
+    void GroupManager::assignVehicleToGroup( entt::entity group, entt::entity vehicle ) {
+
+    }
+
+    void GroupManager::assignGroupToVehicleCargo( entt::entity group, entt::entity vehicle ) {
+
     }
 
     void GroupManager::onUnitKilled(intercept::types::object& unit, intercept::types::object& killer) {

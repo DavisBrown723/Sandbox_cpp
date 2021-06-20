@@ -20,6 +20,11 @@ namespace sandbox {
             Vehicle
         };
 
+        enum EngineState : bool {
+            EngineOn = true,
+            EngineOff = false
+        };
+
         struct Hitpoint {
             std::string name;
             int damage;
