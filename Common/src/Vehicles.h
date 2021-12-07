@@ -10,7 +10,7 @@ namespace sandbox {
 
         types::VehicleSeats findVehicleSeats(std::string_view vehicleClass);
 
-        int findVehicleSpeed( const std::string& vehicleClass );
+        double findVehicleSpeed( const std::string& vehicleClass );
         types::VehicleType findVehicleType( const std::string& vehicleClass );
 
     }

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../types/EntityTypes.h"
+#include "../EntityTypes.h"
 
 namespace sandbox {
     namespace components {

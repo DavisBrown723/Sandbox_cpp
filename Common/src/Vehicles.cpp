@@ -39,8 +39,8 @@ namespace sandbox {
             return seats;
         }
 
-        int findVehicleSpeed( const std::string& vehicleClass ) {
-            return (int)get_number( config_entry( config_file() ) >> vehicleClass >> "maxSpeed" );
+        double findVehicleSpeed( const std::string& vehicleClass ) {
+            return (double)get_number( config_entry( config_file() ) >> vehicleClass >> "maxSpeed" );
         }
 
         types::VehicleType findVehicleType( const std::string& vehicleClass ) {

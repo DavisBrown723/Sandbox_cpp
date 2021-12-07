@@ -238,7 +238,6 @@
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\EntityTypes.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\types\EntityTypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core.cpp" />

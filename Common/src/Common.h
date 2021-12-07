@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 #include "Common/src/Singleton.h"
 #include "System.h"
 

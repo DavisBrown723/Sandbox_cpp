@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "intercept.hpp"
+
 #include "Common/src/types/Vehicle.h"
 
 namespace sandbox {
@@ -10,6 +12,7 @@ namespace sandbox {
         struct Vehicle {
             std::string classname;
             types::VehicleType vehicleType;
+            intercept::types::object vehicleObject;
 
             bool engineOn;
         };

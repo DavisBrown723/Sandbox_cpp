@@ -235,6 +235,7 @@
     <ClInclude Include="src\components\SeatAssignment.h" />
     <ClInclude Include="src\components\Unit.h" />
     <ClInclude Include="src\components\Vehicle.h" />
+    <ClInclude Include="src\components\VehicleAssignments.h" />
     <ClInclude Include="src\components\Waypoints.h" />
     <ClInclude Include="src\GroupManager.h" />
     <ClInclude Include="src\pch.h" />
