@@ -88,13 +88,9 @@ namespace sandbox {
             return;
 
         auto entity = m_spawnQueue[0];
-        auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
-
-        spawning.spawn(entity);
-        spawning.active = true;
+        spawnEntity(entity);
 
         m_spawnQueue.erase(m_spawnQueue.begin());
-
         m_activeEntities.push_back(entity);
     }
 
@@ -103,10 +99,7 @@ namespace sandbox {
             return;
 
         auto entity = m_despawnQueue[0];
-        auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
-
-        spawning.despawn(entity);
-        spawning.active = false;
+        despawnEntity(entity);
 
         auto iter = std::find(m_activeEntities.begin(), m_activeEntities.end(), entity);
         m_activeEntities.erase(iter);
@@ -115,13 +108,15 @@ namespace sandbox {
     }
 
     void SpawnSystem::spawnEntity(entt::handle entity) {
-        const auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
+        auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
         spawning.spawn(entity);
+        spawning.active = true;
     }
 
     void SpawnSystem::despawnEntity(entt::handle entity) {
-        const auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
+        auto& spawning = Core::EntityRegistry.get<Spawning>(entity);
         spawning.despawn(entity);
+        spawning.active = false;
     }
 
 }
