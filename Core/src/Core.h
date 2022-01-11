@@ -7,6 +7,7 @@
 #include "Common/src/System.h"
 #include "VirtualSpace/src/SpawnSystem.h"
 #include "GroupManager/src/GroupManager.h"
+#include "Pathfinding/src/PathGenerator.h"
 
 #ifdef INCLUDE_DEMO
     #include "Demo/src/Demo.h"
@@ -25,6 +26,7 @@ namespace sandbox {
 
         SpawnSystem m_spawnSystem;
         GroupManager m_groupManager;
+        PathGenerator m_pathGenerator;
         #ifdef INCLUDE_DEMO
             __internal::Demo m_demo;
         #endif
@@ -57,9 +59,10 @@ namespace sandbox {
         void UnInitialize();
 
         inline static bool IsMissionRunning() { return Core::Get().m_missionRunning; }
-        inline static bool IsGamePaused() { return Core::Get().m_gamePaused; };
+        inline static bool IsGamePaused() { return Core::Get().m_gamePaused; }
 
-        inline static GroupManager GetGroupManager() { return Core::Get().m_groupManager; };
+        inline static GroupManager GetGroupManager() { return Core::Get().m_groupManager; }
+        inline static PathGenerator GetPathGenerator() { return Core::Get().m_pathGenerator; }
     };
 
 }

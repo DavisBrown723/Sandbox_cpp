@@ -97,7 +97,7 @@ namespace sandbox {
 
     entt::handle GroupManager::createGroup(Faction* faction, types::ConfigGroup group, const types::Vector3& position) {
         return entt::handle();
-        //return createGroup(getConfigGroupUnitClasses(group), faction, position);
+        return createGroup(getConfigGroupUnitClasses(group), faction, position);
     }
 
     entt::handle GroupManager::createVehicle( const std::string& vehicleClass, types::Faction* faction, const types::Vector3& position ) {

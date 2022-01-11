@@ -259,6 +259,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\SQF.cpp" />
     <ClCompile Include="src\types\Side.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Demo|Win32'">pch.h</PrecompiledHeaderFile>
@@ -284,6 +285,7 @@
     <ClInclude Include="src\System.h" />
     <ClInclude Include="src\types\Faction.h" />
     <ClInclude Include="src\types\ConfigGroup.h" />
+    <ClInclude Include="src\SQF.h" />
     <ClInclude Include="src\types\TargetingSystem.h" />
     <ClInclude Include="src\types\TurretPath.h" />
     <ClInclude Include="src\types\UnitLoadout.h" />
